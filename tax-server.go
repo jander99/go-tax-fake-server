@@ -60,5 +60,8 @@ func PostRental(w http.ResponseWriter, r *http.Request) {
 	var rentalResponse RentalResponse
 	rentalResponse.LineItems = resLines
 	rentalResponse.TotalTaxAmount = math.Round(totalTax*100) / 100
+
+	w.Header().Set("Content-Type", "application/json")
+
 	_ = json.NewEncoder(w).Encode(rentalResponse)
 }
