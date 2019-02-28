@@ -1,0 +1,14 @@
+{
+    	"transactionDate": "mydate",
+
+	"storeNumber": "0121",
+	"lineItems": [
+        {
+            "lineItemId": 1,
+            "grossAmount": 20.00,
+            "quantity": 3,
+            "category": "bubba",
+            "subCategory": "sub-bubba"
+        }
+    ]
+}

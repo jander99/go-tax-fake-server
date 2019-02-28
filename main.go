@@ -2,11 +2,14 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
 	"log"
 	"math"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
+
+const AuthToken = "FE1CBBBE-653B-4594-A5AD-67B5256D2FEB"
 
 type RequestLineItem struct {
 	LineItemID  int     `json:"lineItemId"`
@@ -32,16 +35,14 @@ type RentalResponse struct {
 	LineItems      []ResponseLineItem `json:"lineItems"`
 }
 
-func main() {
+func postRental(w http.ResponseWriter, r *http.Request) {
 
-	router := mux.NewRouter()
+	authToken := r.Header.Get("Authorization")
 
-	router.HandleFunc("/tax/v2/rental", PostRental).Methods("POST")
-
-	log.Fatal(http.ListenAndServe(":8080", router))
-}
-
-func PostRental(w http.ResponseWriter, r *http.Request) {
+	if AuthToken != authToken {
+		http.Error(w, "Unauthorized", http.StatusForbidden)
+		return
+	}
 
 	var rentalRequest RentalRequest
 	_ = json.NewDecoder(r.Body).Decode(&rentalRequest)
@@ -64,4 +65,13 @@ func PostRental(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	_ = json.NewEncoder(w).Encode(rentalResponse)
+}
+
+func main() {
+
+	router := mux.NewRouter()
+
+	router.HandleFunc("/tax/v2/rental", postRental).Methods("POST")
+
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
